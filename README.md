@@ -15,7 +15,7 @@
 ### Swift Package Manager
 
 - File > Swift Packages > Add Package Dependency
-- Add `https://github.com/Camji55/logsnag-swift.git`
+- Add `https://github.com/LinusGeffarth/logsnag-swift.git`
 - Select "Up to Next Major" with "1.0.0"
 
 ## Usage
@@ -45,7 +45,10 @@ let success = try await logsnag.asyncPublish(
         channel: "waitlist",
         event: "User Joined",
         icon: "🎉",
-        notify: true
+        notify: true,
+        tags: [
+            "source": "social_media"
+        ]
     )
 )
 ```
@@ -58,7 +61,10 @@ logsnag.publish(
         channel: "waitlist",
         event: "User Joined",
         icon: "🎉",
-        notify: true
+        notify: true,
+        tags: [
+            "source": "social_media"
+        ]
     )
 )
 .sink(
