@@ -10,6 +10,7 @@ public struct PublishOptions: Codable, Equatable {
     var project: String?
     var userId: String?
     var autoAddUserId: Bool?
+    let tags: [String: String]?
     
     /// Creates a `PublishOptions` object to send to LogSnag
     /// - Parameters:
@@ -20,6 +21,7 @@ public struct PublishOptions: Codable, Equatable {
     ///   - notify: Send push notification  (default `nil`)
     ///   - userId: User ID  (default `nil`)
     ///   - autoAddUserId: Automatically add user ID to event  (default `nil`)
+    ///   - tags: Additional information as key:value (default `nil`)
     public init(
         channel: String,
         event: String,
@@ -27,7 +29,8 @@ public struct PublishOptions: Codable, Equatable {
         icon: String? = nil,
         notify: Bool? = nil,
         userId: String? = nil,
-        autoAddUserId: Bool? = nil
+        autoAddUserId: Bool? = nil,
+        tags: [String: String]? = nil
     ) {
         self.channel = channel
         self.event = event
@@ -36,11 +39,12 @@ public struct PublishOptions: Codable, Equatable {
         self.notify = notify
         self.userId = userId
         self.autoAddUserId = autoAddUserId
+        self.tags = tags
     }
     
     enum CodingKeys: String, CodingKey {
-         case channel, description, event, icon, notify, project
-         case userId = "user_id"
-         case autoAddUserId
-     }
+        case channel, description, event, icon, notify, project, tags
+        case userId = "user_id"
+        case autoAddUserId
+    }
 }
