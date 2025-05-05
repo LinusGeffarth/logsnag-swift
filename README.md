@@ -10,7 +10,7 @@
 </div>
 
 
-## Installation
+# Installation
 
 ### Swift Package Manager
 
@@ -18,15 +18,15 @@
 - Add `https://github.com/LinusGeffarth/logsnag-swift.git`
 - Select "Up to Next Major" with "1.0.0"
 
-## Usage
+# Usage
 
-### Import Library
+### 1. Import Library
 
 ```swift
 import LogSnag
 ```
 
-### Initialize Client
+### 2. Initialize Client
 
 ```swift
 let logsnag = LogSnagClient(
@@ -35,13 +35,13 @@ let logsnag = LogSnagClient(
 )
 ```
 
-### Publish Event
+## Publishing an Event
 
-#### `async/await`
+### `async/await`
 
 ```swift
 let success = try await logsnag.asyncPublish(
-    options: PublishOptions(
+    options: Options.Publish(
         channel: "waitlist",
         event: "User Joined",
         icon: "🎉",
@@ -53,17 +53,52 @@ let success = try await logsnag.asyncPublish(
 )
 ```
 
-#### Combine
+### Combine
 
 ```swift
 logsnag.publish(
-    options: PublishOptions(
+    options: Options.Publish(
         channel: "waitlist",
         event: "User Joined",
         icon: "🎉",
         notify: true,
         tags: [
             "source": "social_media"
+        ]
+    )
+)
+.sink(
+    receiveCompletion: { _ in },
+    receiveValue: { _ in }
+)
+.store(in: &cancellables)
+```
+
+## User Identification
+
+### `async/await`
+
+```swift
+let success = try await logsnag.asyncIdentify(
+    options: Options.Identify(
+        userId: "1",
+        properties: [
+            "email": "email@example.com",
+            "company_name": "Example LLC."
+        ]
+    )
+)
+```
+
+### Combine
+
+```swift
+logsnag.identify(
+    options: Options.Identify(
+        userId: "1",
+        properties: [
+            "email": "email@example.com",
+            "company_name": "Example LLC."
         ]
     )
 )
