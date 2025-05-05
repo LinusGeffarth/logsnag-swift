@@ -85,6 +85,7 @@ public class LogSnagClient {
     /// Publish a new event to LogSnag
     /// - Parameter options
     /// - Returns: Combine `Publisher`
+    @discardableResult
     public func publish(options: Options.Publish) -> AnyPublisher<Bool, Error> {
         dataClient.dataTaskPublisher(for: _publish(options: options))
     }
@@ -104,6 +105,7 @@ public class LogSnagClient {
     /// Identify the user with LogSnag
     /// - Parameter options
     /// - Returns: Combine `Publisher`
+    @discardableResult
     public func identify(options: Options.Identify) -> AnyPublisher<Bool, Error> {
         dataClient.dataTaskPublisher(for: _identify(options: options))
     }
