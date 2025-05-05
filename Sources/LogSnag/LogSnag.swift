@@ -37,15 +37,18 @@ public class LogSnagClient {
         "Bearer \(token)"
     }
     
-    private func request(options: PublishOptions) -> URLRequest {
-        var request = URLRequest(url: URL(string: Constants.logSnagEndpoint)!)
-        
+    private func request(to url: String, data: Data?) -> URLRequest {
+        var request = URLRequest(url: URL(string: url)!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = [
             "Content-Type": "application/json",
             "Authorization": createAuthorizationHeader()
         ]
-        
+        request.httpBody = data
+        return request
+    }
+    
+    private func _publish(options: Options.Publish) -> URLRequest {
         var options = options
         options.project = project
         
@@ -54,9 +57,17 @@ public class LogSnagClient {
             options.autoAddUserId = nil
         }
         
-        request.httpBody = try? jsonEncoder.encode(options)
+        let data = try? jsonEncoder.encode(options)
+        return request(to: Endpoints.log, data: data!)
+    }
+    
+    private func _identify(options: Options.Identify) -> URLRequest {
+        var options = options
+        options.project = project
         
-        return request
+        let data = try? jsonEncoder.encode(options)
+        
+        return request(to: Endpoints.identify, data: data!)
     }
     
     /// Publish a new event to LogSnag
@@ -67,15 +78,34 @@ public class LogSnagClient {
     @available(tvOS 15.0, *)
     @available(watchOS 8.0, *)
     @discardableResult
-    public func asyncPublish(options: PublishOptions) async throws -> Bool {
-        try await dataClient.data(for: request(options: options))
+    public func asyncPublish(options: Options.Publish) async throws -> Bool {
+        try await dataClient.data(for: _publish(options: options))
     }
     
     /// Publish a new event to LogSnag
     /// - Parameter options
     /// - Returns: Combine `Publisher`
-    public func publish(options: PublishOptions) -> AnyPublisher<Bool, Error> {
-        dataClient.dataTaskPublisher(for: request(options: options))
+    public func publish(options: Options.Publish) -> AnyPublisher<Bool, Error> {
+        dataClient.dataTaskPublisher(for: _publish(options: options))
+    }
+    
+    /// Identify the user with LogSnag
+    /// - Parameter options
+    /// - Returns: true when successfully identified
+    @available(iOS 15.0, *)
+    @available(macOS 12.0, *)
+    @available(tvOS 15.0, *)
+    @available(watchOS 8.0, *)
+    @discardableResult
+    public func asyncIdentify(options: Options.Identify) async throws -> Bool {
+        try await dataClient.data(for: _identify(options: options))
+    }
+    
+    /// Identify the user with LogSnag
+    /// - Parameter options
+    /// - Returns: Combine `Publisher`
+    public func identify(options: Options.Identify) -> AnyPublisher<Bool, Error> {
+        dataClient.dataTaskPublisher(for: _identify(options: options))
     }
     
     private func generateOrRetrieveUserId() -> String {
